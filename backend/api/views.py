@@ -4,13 +4,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import Http404
-from django.shortcuts import get_object_or_404
 from django.contrib.auth import update_session_auth_hash
 from django.db.models import Count, Prefetch, Sum
 from django_filters.rest_framework import DjangoFilterBackend
-
 
 from api.serializers import (
     UserSerializer,
@@ -102,7 +98,6 @@ class RecipeViewSet(ModelViewSet, AnnotateMixin):
             return CreateRecipeSerializer
         return super().get_serializer_class()
 
-
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -112,7 +107,6 @@ class RecipeViewSet(ModelViewSet, AnnotateMixin):
             self.get_queryset().get(id=serializer.data['id'])
         ).data
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
-
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -130,7 +124,7 @@ class RecipeViewSet(ModelViewSet, AnnotateMixin):
             detail=False,
             url_path='download_shopping_cart',
             permission_classes=(IsAuthenticated,)
-    )        # make download   done
+    )
     def download_shopping_cart(self, request):
         ingredients_dict = self.get_queryset()
         return create_textfile(request, ingredients_dict)
@@ -150,20 +144,6 @@ class RecipeViewSet(ModelViewSet, AnnotateMixin):
 
     @shopping_cart.mapping.delete
     def delete_shopping_cart(self, request, pk):
-        # recipe = get_object_or_404(Recipe, id=pk)
-        # shopping_card = get_object_or_404(ShoppingCard, user=self.request.user, recipe=recipe)  # fix: need to throw 400, not 404
-
-        # try:
-        #     recipe = Recipe.objects.get(pk=pk)
-        #     shopping_card = ShoppingCard.objects.get(user=self.request.user, recipe=recipe)
-        # except Recipe.DoesNotExist:
-        #     raise ValidationError(
-        #         'Неопознанный рецепт!'
-        #     )
-        # except ShoppingCard.DoesNotExist:
-        #     raise ValidationError(
-        #         'Данный рецепт отстуствует в списке покупок!'
-        #     )
         shopping_card = validate_before_delete(request.user, ShoppingCard, pk)
         shopping_card.delete()
         return Response(data={'message': 'DELETED'},
@@ -219,7 +199,7 @@ class UserViewSet(ModelViewSet, AnnotateMixin):
         if self.action in ('create',):
             return CreateUserSerializer
         return super().get_serializer_class()
-    
+
     def destroy(self, request, pk=None):
         pass
 
@@ -268,23 +248,22 @@ class UserViewSet(ModelViewSet, AnnotateMixin):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-
-        # follow_obj, created = Follow.objects.get_or_create(
-        #     user=request.user,
-        #     following=self.get_object()
-        # )
-        # if not created:
-        #     ...
-        #     # return Response({'error': 'u subscribed to yourself or subscribe is already created'}, status=status.HTTP_400_BAD_REQUEST) # fix: better to use serializer
-        # if created:
-        return Response(FollowSerializer(self.get_object(), context=serializer.context).data, status=status.HTTP_201_CREATED)
+        return Response(
+            FollowSerializer(
+                self.get_object(),
+                context=serializer.context
+            ).data,
+            status=status.HTTP_201_CREATED
+        )
 
     @subscribe.mapping.delete
     def delete_subscribe(self, request, pk):
         instance = self.get_object()
-        # follow_obj = get_object_or_404(Follow, user=request.user, following=instance.id) # fix: need to throw 400, not 404
         try:
-            follow_obj = Follow.objects.get(user=request.user, following=instance)
+            follow_obj = Follow.objects.get(
+                user=request.user,
+                following=instance
+            )
         except Follow.DoesNotExist:
             raise ValidationError(
                 f'Данная подписка отстуствует в {Follow.__name__}!'

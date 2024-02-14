@@ -1,7 +1,7 @@
 from django_filters import FilterSet
 from django_filters.filters import (
     BooleanFilter,
-    NumberFilter,
+    CharFilter,
     ModelMultipleChoiceFilter,
 )
 from django_filters.widgets import BooleanWidget
@@ -33,8 +33,8 @@ class RecipeFilter(FilterSet):
 
 
 class IngredientFilter(FilterSet):
+    name = CharFilter(lookup_expr='istartswith')
+
     class Meta:
         model = Ingredient
-        fields = {
-            'name': ['istartswith']
-        }
+        fields = ('name',)

@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.db.models import Exists, OuterRef, Value
-from django.http import FileResponse
+from django.http import HttpResponse
 from rest_framework.serializers import ModelSerializer, ValidationError
 
 
@@ -93,10 +93,8 @@ class DynamicFieldsModelSerializer(ModelSerializer):
 
 
 def create_textfile(request, ingredients):
-
     text = (
         'Ваш список покупок:\n'
-        # f'{request.user.first_name} {request.user.last_name}\n'
     )
     for ingredient in ingredients:
         text += (
@@ -104,8 +102,11 @@ def create_textfile(request, ingredients):
             f'{ingredient["amount"]} '
             f'{ingredient["ingredients__measurement_unit"]}\n'
         )
-    response = FileResponse(text, as_attachment=True)
-    response['Content-Disposition'] = 'attachment; filename=shopping_list.txt'
+    # response = FileResponse(text, as_attachment=True)
+    response = HttpResponse(text, content_type='text/plain')
+    response['Content-Disposition'] = (
+        u'attachment; filename="shoppinglist.txt"'
+        )
     return response
 
 

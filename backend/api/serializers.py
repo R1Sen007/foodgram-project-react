@@ -1,13 +1,8 @@
-from collections import OrderedDict
-
-from django.shortcuts import get_object_or_404
 from django.db.utils import IntegrityError
 from django.contrib.auth.password_validation import validate_password
 from rest_framework.serializers import (
     Serializer,
     ModelSerializer,
-    SlugRelatedField,
-    PrimaryKeyRelatedField,
     CurrentUserDefault,
     ValidationError,
     SerializerMethodField,
@@ -41,7 +36,7 @@ class TagSerializer(ModelSerializer):
     class Meta:
         model = Tag
         fields = '__all__'
-        read_only_fields = ('id', 'name', 'color', 'slug')  # make represent from base64
+        read_only_fields = ('id', 'name', 'color', 'slug')
 
 
 class UserBaseSerializer(ModelSerializer):
@@ -124,15 +119,11 @@ class RecipeSerializer(DynamicFieldsModelSerializer):
         source='recipeingredient_set',
         many=True,
     )
-    # ingredients = IngredientSerializer(many=True, read_only=True)
     tags = TagSerializer(many=True)
     author = UserSerializer()
 
     class Meta:
         model = Recipe
-        # fields = ('id', 'tags', 'author', 'ingredients', 'is_favorited',
-        #           'is_in_shopping_cart', 'name', 'image', 'text',
-        #           'cooking_time')
         exclude = ('pub_date',)
 
 
@@ -149,7 +140,6 @@ class CreateRecipeSerializer(ModelSerializer):
                   'name', 'text', 'cooking_time')
 
     def validate_ingredients(self, value):
-        print('validation')
         ingredients = value
         if not ingredients:
             raise ValidationError({
@@ -169,7 +159,9 @@ class CreateRecipeSerializer(ModelSerializer):
         tags_list = []
         for tag in tags:
             if tag in tags_list:
-                raise ValidationError({'tags': 'Теги должны быть уникальными!'})
+                raise ValidationError(
+                    {'tags': 'Теги должны быть уникальными!'}
+                )
             tags_list.append(tag)
         return value
 
@@ -177,7 +169,9 @@ class CreateRecipeSerializer(ModelSerializer):
         try:
             RecipeIngredient.objects.bulk_create(
                 [RecipeIngredient(
-                    ingredient=Ingredient.objects.get(**ingredient['ingredient']),
+                    ingredient=Ingredient.objects.get(
+                        **ingredient['ingredient']
+                    ),
                     recipe=recipe,
                     amount=ingredient['amount']
                 ) for ingredient in ingredients]
@@ -219,7 +213,6 @@ class ShoppingCardSerializer(Serializer):
                 queryset=ShoppingCard.objects.all(),
                 fields=('user', 'recipe')
             ),
-            # todo: накрутить валидаторов
         ]
 
     def create(self, validated_data):
@@ -240,7 +233,6 @@ class FavoriteSerializer(ShoppingCardSerializer):
                 queryset=Favorite.objects.all(),
                 fields=('user', 'recipe')
             ),
-            # todo: накрутить валидаторов
         ]
 
     def create(self, validated_data):
@@ -284,7 +276,6 @@ class CreateFollowSerializer(Serializer):
                 queryset=Follow.objects.all(),
                 fields=('user', 'following')
             ),
-            # todo: накрутить валидаторов
         ]
 
     def validate(self, data):
@@ -299,5 +290,4 @@ class CreateFollowSerializer(Serializer):
         return Follow.objects.create(**validated_data)
 
     def to_representation(self, instance):
-        print(instance)
         return FollowSerializer(instance.following, context=self.context).data
