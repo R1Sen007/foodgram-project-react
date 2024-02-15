@@ -76,8 +76,7 @@ class RecipeViewSet(ModelViewSet, AnnotateMixin):
                        Prefetch('author', queryset=author_queryset),
                        Prefetch('ingredients',
                                 queryset=Ingredient.objects.all()),
-                       Prefetch('tags', queryset=Tag.objects.all()),
-                    )
+                       Prefetch('tags', queryset=Tag.objects.all()),)
         )
         queryset = self.annotate_qs_is_favorited_field(queryset)
         queryset = self.annotate_qs_is_in_shopping_cart_field(queryset)
@@ -121,20 +120,20 @@ class RecipeViewSet(ModelViewSet, AnnotateMixin):
         return Response(data)
 
     @action(
-            detail=False,
-            url_path='download_shopping_cart',
-            permission_classes=(IsAuthenticated,)
+        detail=False,
+        url_path='download_shopping_cart',
+        permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
         ingredients_dict = self.get_queryset()
         return create_textfile(request, ingredients_dict)
 
     @action(
-            detail=True,
-            url_path='shopping_cart',
-            methods=['post'],
-            serializer_class=ShoppingCardSerializer,
-            permission_classes=(IsAuthenticated,)
+        detail=True,
+        url_path='shopping_cart',
+        methods=['post'],
+        serializer_class=ShoppingCardSerializer,
+        permission_classes=(IsAuthenticated,)
     )
     def shopping_cart(self, request, pk):
         serializer = self.get_serializer(data=request.data)
@@ -150,11 +149,11 @@ class RecipeViewSet(ModelViewSet, AnnotateMixin):
                         status=status.HTTP_204_NO_CONTENT)
 
     @action(
-            detail=True,
-            url_path='favorite',
-            methods=['post'],
-            serializer_class=FavoriteSerializer,
-            permission_classes=(IsAuthenticated,)
+        detail=True,
+        url_path='favorite',
+        methods=['post'],
+        serializer_class=FavoriteSerializer,
+        permission_classes=(IsAuthenticated,)
     )
     def favorite(self, request, pk):
         serializer = self.get_serializer(data=request.data)
@@ -204,11 +203,11 @@ class UserViewSet(ModelViewSet, AnnotateMixin):
         pass
 
     @action(
-            detail=False,
-            url_path='set_password',
-            methods=['post'],
-            serializer_class=ChangePasswordSerializer,
-            permission_classes=(IsAuthenticated,)
+        detail=False,
+        url_path='set_password',
+        methods=['post'],
+        serializer_class=ChangePasswordSerializer,
+        permission_classes=(IsAuthenticated,)
     )
     def set_password(self, request):
         serializer = self.get_serializer(data=request.data)
@@ -221,11 +220,11 @@ class UserViewSet(ModelViewSet, AnnotateMixin):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
-            detail=False,
-            url_path='subscriptions',
-            methods=['get'],
-            serializer_class=FollowSerializer,
-            permission_classes=(IsAuthenticated,)
+        detail=False,
+        url_path='subscriptions',
+        methods=['get'],
+        serializer_class=FollowSerializer,
+        permission_classes=(IsAuthenticated,)
     )
     def subscriptions(self, request):
         subscriptions = self.get_queryset()
@@ -237,11 +236,11 @@ class UserViewSet(ModelViewSet, AnnotateMixin):
         return Response(serializer.data)
 
     @action(
-            detail=True,
-            url_path='subscribe',
-            methods=['post'],
-            serializer_class=CreateFollowSerializer,
-            permission_classes=(IsAuthenticated,)
+        detail=True,
+        url_path='subscribe',
+        methods=['post'],
+        serializer_class=CreateFollowSerializer,
+        permission_classes=(IsAuthenticated,)
     )
     def subscribe(self, request, pk):
         # instance = self.get_object()
@@ -273,11 +272,11 @@ class UserViewSet(ModelViewSet, AnnotateMixin):
                         status=status.HTTP_204_NO_CONTENT)
 
     @action(
-            detail=False,
-            methods=['get'],
-            url_path='me',
-            url_name='me',
-            permission_classes=(IsAuthenticated,)
+        detail=False,
+        methods=['get'],
+        url_path='me',
+        url_name='me',
+        permission_classes=(IsAuthenticated,)
     )
     def about_me(self, request):
         current_user = request.user

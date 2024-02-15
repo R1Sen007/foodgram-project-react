@@ -1,9 +1,9 @@
 name: Main workflow
 
 on:
-  push
-    # branches:
-    #   - main
+  push:
+    branches:
+      - master
 
 jobs:
   tests:

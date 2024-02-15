@@ -106,7 +106,7 @@ def create_textfile(request, ingredients):
     response = HttpResponse(text, content_type='text/plain')
     response['Content-Disposition'] = (
         u'attachment; filename="shoppinglist.txt"'
-        )
+    )
     return response
 
 
