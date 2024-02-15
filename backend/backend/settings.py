@@ -21,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-js9rwdx85#h2ef@@*za1lxoduo-dfjrzx87a_6bsmjr-wmfm$8'
+SECRET_KEY = os.getenv('SECRET_KEY', ''),
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
@@ -137,15 +137,6 @@ REST_FRAMEWORK = {
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'HIDE_USERS': False,
-    # 'SERIALIZERS': {
-    #     'user_create': 'api.serializers.CustomUserCreateSerializer',
-    #     'user': 'api.serializers.CustomUserSerializer',
-    #     'current_user': 'api.serializers.CustomUserSerializer',
-    # },
-    # 'PERMISSIONS': {
-    #     'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
-    #     'user_list': ['rest_framework.permissions.AllowAny'],
-    # },
 }
 
 CSV_FILES = BASE_DIR / 'data'
@@ -157,7 +148,6 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
-# DEFAULT_CHARSET = ''
 
 USE_I18N = True
 

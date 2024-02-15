@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth import update_session_auth_hash
 from django.db.models import Count, Prefetch, Sum
@@ -173,6 +173,7 @@ class UserViewSet(ModelViewSet, AnnotateMixin):
     http_method_names = ['get', 'post', 'delete']
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = (AllowAny,)
 
     def get_queryset(self):
         queryset = self.annotate_qs_is_subscribe_field(super().get_queryset())
