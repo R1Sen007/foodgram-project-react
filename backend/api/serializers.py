@@ -119,12 +119,18 @@ class RecipeSerializer(DynamicFieldsModelSerializer):
         source='recipeingredient_set',
         many=True,
     )
+    image = SerializerMethodField('get_image_url')
     tags = TagSerializer(many=True)
     author = UserSerializer()
 
     class Meta:
         model = Recipe
         exclude = ('pub_date',)
+
+    def get_image_url(self, obj):
+        if obj.image:
+            return obj.image.url
+        return None
 
 
 class CreateRecipeSerializer(ModelSerializer):
