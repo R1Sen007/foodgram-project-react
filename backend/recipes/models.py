@@ -120,7 +120,7 @@ class RecipeIngredient(models.Model):
         on_delete=models.CASCADE
     )
     amount = models.IntegerField(
-        validators=[MinValueValidator(1, 'Amount can`t be less 1.'),]
+        validators=[MinValueValidator(1, 'Amount can`t be less 1.'), ]
     )
 
     class Meta:
