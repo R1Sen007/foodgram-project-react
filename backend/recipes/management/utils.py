@@ -8,6 +8,7 @@ def import_simple_csv(filename, model):
 
     with open(csv_file, 'r') as f:
         csv_dict = csv.DictReader(f)
+        instances_list = []
         for row in csv_dict:
             model_instance = model()
             for attr in csv_dict.fieldnames:
@@ -22,4 +23,5 @@ def import_simple_csv(filename, model):
                             id=row.get(attr)
                         )
                     )
-            model_instance.save()
+            instances_list.append(model_instance)
+        model.objects.bulk_create(instances_list)

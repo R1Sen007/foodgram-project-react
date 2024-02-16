@@ -43,7 +43,6 @@ class RecipeAdmin(admin.ModelAdmin):
     inlines = [RecipeIngredientInline, ]
     list_display = ['id', 'author', 'name', 'get_text',
                     'cooking_time', 'favorited']
-    # search_fields = ['name', 'author']
     list_filter = ['name', 'author', 'tags']
 
     def get_text(self, obj):

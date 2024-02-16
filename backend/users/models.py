@@ -10,6 +10,8 @@ from users.validators import required_username
 
 
 class CustomUser(AbstractUser):
+    """Модель пользователя."""
+
     USER_ROLE = 'user'
     ADMIN_ROLE = 'admin'
     ROLE_CHOICES = [
@@ -53,9 +55,11 @@ class CustomUser(AbstractUser):
         verbose_name_plural = 'Пользователи'
         ordering = ['username']
 
-    def has_user_role(self):
+    def has_user_role(self) -> bool:
+        """Проверка на обычного пользователя."""
         return self.role == self.USER_ROLE
 
-    def has_admin_role(self):
+    def has_admin_role(self) -> bool:
+        """Проверка на администратора"""
         return (self.role == self.ADMIN_ROLE
                 or self.is_superuser)

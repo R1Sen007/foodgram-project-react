@@ -12,6 +12,8 @@ User = get_user_model()
 
 
 class Tag(models.Model):
+    """Модель тэгов."""
+
     name = models.CharField(
         max_length=MAX_NAME_LENGTH,
         verbose_name='Название тега'
@@ -25,7 +27,6 @@ class Tag(models.Model):
     )
 
     class Meta:
-        # ordering = ('name',)
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
@@ -34,6 +35,8 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
+    """Модель ингредиентов."""
+
     name = models.CharField(
         max_length=MAX_NAME_LENGTH,
         verbose_name='Название ингредиента'
@@ -44,7 +47,6 @@ class Ingredient(models.Model):
     )
 
     class Meta:
-        # ordering = ('name',)
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
         constraints = [
@@ -59,6 +61,8 @@ class Ingredient(models.Model):
 
 
 class Recipe(models.Model):
+    """Модель рецептов."""
+
     author = models.ForeignKey(
         User,
         related_name='recipes',
@@ -90,7 +94,6 @@ class Recipe(models.Model):
         verbose_name='Тэг'
     )
     cooking_time = models.IntegerField(
-        # validator min value 1
         validators=[
             MinValueValidator(1, 'Cooking_time can`t be less 1.'),
         ],
@@ -111,6 +114,8 @@ class Recipe(models.Model):
 
 
 class RecipeIngredient(models.Model):
+    """Модель ингредиентов вместе с рецептами."""
+
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE
@@ -124,7 +129,6 @@ class RecipeIngredient(models.Model):
     )
 
     class Meta:
-        # ordering = ('name',)
         verbose_name = 'Рецепт & Ингредиент'
         verbose_name_plural = 'Рецепты & Ингредиенты'
         constraints = [
@@ -139,6 +143,8 @@ class RecipeIngredient(models.Model):
 
 
 class Follow(models.Model):
+    """Модель подписок."""
+
     user = models.ForeignKey(
         User, on_delete=models.CASCADE,
         related_name='follows'
@@ -162,6 +168,8 @@ class Follow(models.Model):
 
 
 class Favorite(models.Model):
+    """Модель избранного."""
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -187,6 +195,8 @@ class Favorite(models.Model):
 
 
 class ShoppingCard(models.Model):
+    """Модель списка покупок."""
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
